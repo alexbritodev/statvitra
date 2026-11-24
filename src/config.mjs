@@ -13,6 +13,7 @@ export const defaults = {
   languageRepositoryLimit: 30,
   projectCount: 3,
   cards: ['overview', 'languages', 'projects', 'activity'],
+  overviewMetrics: ['repos', 'stars', 'forks', 'followers'],
   layout: 'stacked',
   branding: { position: 'hidden', link: false },
   animation: 'none',
@@ -21,6 +22,7 @@ export const defaults = {
 
 const loginPattern = /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i
 const animations = ['none', 'fade', 'rise', 'sweep']
+const availableMetrics = [...defaults.overviewMetrics, 'forksMade', 'following', 'publicGists']
 
 function validateOptions(config) {
   if (!['stacked', 'columns'].includes(config.layout)) throw new Error('layout must be stacked or columns.')
@@ -74,7 +76,7 @@ export function parseConfig(input, username, locale) {
   for (const key of ['includeArchived', 'includeForks']) {
     if (typeof config[key] !== 'boolean') throw new Error(`${key} must be true or false.`)
   }
-  for (const key of ['excludeRepositories', 'excludeLanguages', 'cards']) {
+  for (const key of ['excludeRepositories', 'excludeLanguages', 'cards', 'overviewMetrics']) {
     if (!Array.isArray(config[key]) || config[key].some(item => typeof item !== 'string' || !item.trim())) {
       throw new Error(`${key} must be an array of nonempty strings.`)
     }
@@ -82,6 +84,9 @@ export function parseConfig(input, username, locale) {
   }
   if (!config.cards.length || config.cards.some(card => !defaults.cards.includes(card))) {
     throw new Error('cards must select overview, languages, projects, or activity.')
+  }
+  if (!config.overviewMetrics.length || config.overviewMetrics.some(metric => !availableMetrics.includes(metric))) {
+    throw new Error(`overviewMetrics must select from ${availableMetrics.join(', ')}.`)
   }
   validateOptions(config)
   for (const [key, limit] of [['languageRepositoryLimit', 100], ['projectCount', 5]]) {

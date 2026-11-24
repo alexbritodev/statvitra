@@ -110,16 +110,21 @@ function languageRows(snapshot, t) {
   return [...rows.slice(0, 5), [t.other, sum(rows.slice(5).map(([, size]) => size))]]
 }
 
-function cardContent(card, s, t, locale) {
+function overviewRows(snapshot, t, metrics) {
+  return metrics.map(key => [t[key], snapshot.overview[key]])
+}
+
+function cardContent(card, s, t, locale, metrics) {
   if (card === 'overview') {
-    const rows = ['repos', 'stars', 'forks', 'followers'].map(key => [t[key], s.overview[key]])
+    const rows = overviewRows(s, t, metrics)
     const description = rows.map(([name, count]) => `${name} — ${number(count, locale)}`).join('. ')
-    return [310, '@' + s.login, description, t.scope, p => rows.map(([name, count], i) => {
+    return [174 + Math.ceil(rows.length / 2) * 68, '@' + s.login, description, t.scope, p => rows.map(([name, count], i) => {
       const x = 28 + (i % 2) * 192
       const y = 126 + Math.floor(i / 2) * 68
-      return rect(x, y, 184, 61, p.panel, 11, p.line) +
+      const tileWidth = i % 2 === 0 && i === rows.length - 1 ? 376 : 184
+      return rect(x, y, tileWidth, 61, p.panel, 11, p.line) +
         label(x + 13, y + 27, compact(count, locale), p.text, 24, 750, 'start', 158) +
-        label(x + 13, y + 48, name, p.muted, 14, 500, 'start', 158)
+        label(x + 13, y + 48, name, p.muted, 14, 500, 'start', tileWidth - 26)
     }).join('')]
   }
 
@@ -186,9 +191,9 @@ function cardContent(card, s, t, locale) {
 }
 
 export function renderCard(card, snapshot, locale, theme, messages, { branding = defaults.branding,
-  animation = defaults.animation, gutter = 0 } = {}) {
+  animation = defaults.animation, gutter = 0, overviewMetrics = defaults.overviewMetrics } = {}) {
   const t = copyFor(locale, messages)
-  const [height, subtitle, description, footer, body] = cardContent(card, snapshot, t, locale)
+  const [height, subtitle, description, footer, body] = cardContent(card, snapshot, t, locale, overviewMetrics)
   const resolvedHeight = branding.position === 'top-left' ? height : height - 33
   return artboard(resolvedHeight, t[card], subtitle, description, footer, theme, locale, body,
     snapshot.demo ? t.demo : '', branding, animation, gutter)
@@ -201,16 +206,19 @@ export function renderReport(snapshot, config) {
   if (snapshot.demo) lines.push('', markdown(t.demo))
   for (const card of config.cards) {
     lines.push('', `## ${markdown(t[card])}`, '')
-    if (card === 'projects') {
+    if (card === 'overview') {
+      const rows = overviewRows(snapshot, t, config.overviewMetrics ?? defaults.overviewMetrics)
+      lines.push(...rows.map(([name, count]) => `- ${markdown(name)} — ${number(count, config.locale)}`))
+      lines.push('', markdown(t.scope))
+    } else if (card === 'projects') {
       const rows = snapshot.projects.map(project => {
         const url = `https://github.com/${encodeURIComponent(snapshot.login)}/${encodeURIComponent(project.name)}`
         return `- [${markdown(project.name)}](${url}) · ${markdown(project.language || t.unknown)} · ${markdown(t.stars)} ${number(project.stars, config.locale)} · ${markdown(t.forks)} ${number(project.forks, config.locale)}`
       })
       lines.push(...(rows.length ? rows : [markdown(t.emptyProjects)]))
     } else {
-      const [, subtitle, description, footer] = cardContent(card, snapshot, t, config.locale)
+      const [, subtitle, description] = cardContent(card, snapshot, t, config.locale)
       lines.push(markdown(subtitle), '', markdown(description))
-      if (card === 'overview') lines.push('', markdown(footer))
     }
   }
   return lines.join('\n') + '\n'
@@ -233,7 +241,10 @@ export function renderEmbed(config) {
   const rows = []
   const rowSize = columns ? 2 : 1
   for (let i = 0; i < pictures.length; i += rowSize) {
-    rows.push(`<p>\n${pictures.slice(i, i + rowSize).join('\n')}\n</p>`)
+    rows.push(pictures.slice(i, i + rowSize).join('\n'))
   }
-  return [embedStart, ...rows, `[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`, embedEnd].join('\n\n') + '\n'
+  // Explicit row breaks pair cards without introducing extra gaps between wrapped rows.
+  const blocks = columns ? [rows.join('\n<br>\n')] : rows
+  const paragraphs = blocks.map(row => `<p>\n${row}\n</p>`)
+  return [embedStart, ...paragraphs, `[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`, embedEnd].join('\n\n') + '\n'
 }

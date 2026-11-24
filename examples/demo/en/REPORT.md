@@ -4,11 +4,14 @@ Sample data
 
 ## Profile overview
 
-@demo
+- Repositories — 24
+- Stars received — 1,428
+- Forks received — 216
+- Forks made — 8
+- Followers — 368
+- Following — 62
 
-Repositories — 24\. Stars received — 1,428\. Forks received — 216\. Followers — 368
-
-Selected public repositories
+Public GitHub data
 
 ## Top languages
 

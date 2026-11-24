@@ -2,7 +2,8 @@ const translations = {
   en: {
     overview: 'Profile overview', languages: 'Top languages', projects: 'Featured projects',
     activity: 'Public activity', repos: 'Repositories', stars: 'Stars received', forks: 'Forks received',
-    followers: 'Followers', scope: 'Selected public repositories', bytes: 'Share of analyzed bytes',
+    followers: 'Followers', scope: 'Public GitHub data', bytes: 'Share of analyzed bytes',
+    forksMade: 'Forks made', following: 'Following', publicGists: 'Public gists',
     scanned: '{count} of {total} eligible repositories analyzed',
     projectsOrder: 'Public repositories ranked by stars',
     emptyLanguages: 'No language data for the selected repositories.',
@@ -14,7 +15,8 @@ const translations = {
   'pt-BR': {
     overview: 'Resumo do perfil', languages: 'Linguagens principais', projects: 'Projetos em destaque',
     activity: 'Atividade pública', repos: 'Repositórios', stars: 'Estrelas recebidas', forks: 'Forks recebidos',
-    followers: 'Seguidores', scope: 'Repositórios públicos selecionados', bytes: 'Proporção dos bytes analisados',
+    followers: 'Seguidores', scope: 'Dados públicos do GitHub', bytes: 'Proporção dos bytes analisados',
+    forksMade: 'Forks feitos', following: 'Seguindo', publicGists: 'Gists públicos',
     scanned: '{count} de {total} repositórios elegíveis analisados',
     projectsOrder: 'Repositórios públicos ordenados por estrelas',
     emptyLanguages: 'Sem dados de linguagens para os filtros atuais.',
@@ -25,8 +27,9 @@ const translations = {
   },
   es: {
     overview: 'Resumen del perfil', languages: 'Lenguajes principales', projects: 'Proyectos destacados',
-    activity: 'Actividad pública', repos: 'Repositorios', stars: 'Estrellas recibidas', forks: 'Bifurcaciones',
-    followers: 'Seguidores', scope: 'Repositorios públicos seleccionados', bytes: 'Proporción de bytes analizados',
+    activity: 'Actividad pública', repos: 'Repositorios', stars: 'Estrellas recibidas', forks: 'Forks recibidos',
+    followers: 'Seguidores', scope: 'Datos públicos de GitHub', bytes: 'Proporción de bytes analizados',
+    forksMade: 'Forks creados', following: 'Siguiendo', publicGists: 'Gists públicos',
     scanned: '{count} de {total} repositorios aptos analizados',
     projectsOrder: 'Repositorios ordenados por estrellas',
     emptyLanguages: 'Sin datos de lenguajes para los filtros actuales.',
@@ -38,7 +41,8 @@ const translations = {
   fr: {
     overview: 'Aperçu du profil', languages: 'Langages principaux', projects: 'Projets à la une',
     activity: 'Activité publique', repos: 'Dépôts', stars: 'Étoiles reçues', forks: 'Forks reçus',
-    followers: 'Abonnés', scope: 'Dépôts publics sélectionnés', bytes: 'Part des octets analysés',
+    followers: 'Abonnés', scope: 'Données publiques de GitHub', bytes: 'Part des octets analysés',
+    forksMade: 'Forks créés', following: 'Abonnements', publicGists: 'Gists publics',
     scanned: '{count} dépôts analysés sur {total}',
     projectsOrder: 'Dépôts publics classés par étoiles',
     emptyLanguages: 'Aucune donnée de langage pour ces filtres.',

@@ -26,11 +26,12 @@ test('paginates, scopes public repositories, reports coverage and ranks projects
     assert.equal(options.headers.Authorization, 'Bearer fixture')
     requests.push(url.pathname)
     switch (url.pathname) {
-      case '/users/demo': return json({ login: 'demo', type: 'User', followers: 19 })
+      case '/users/demo': return json({ login: 'demo', type: 'User', followers: 19, following: 5, public_gists: 2 })
       case '/users/demo/repos':
         if (url.searchParams.get('page') === '2') return json([repo(7, 'newest'), repo(2, 'middle')])
         return json([repo(1, 'older'), repo(2, 'middle'), repo(3, 'ignored'), repo(4, 'archived', { archived: true }),
-          repo(5, 'forked', { fork: true }), repo(6, 'private', { private: true })],
+          repo(5, 'forked', { fork: true }), repo(6, 'private', { private: true, fork: true }),
+          repo(8, 'archived-fork', { archived: true, fork: true })],
         { link: '<https://api.github.com/users/demo/repos?page=2>; rel="next"' })
       case '/repos/demo/newest/languages': return json({ JavaScript: 90, HTML: 15 })
       case '/repos/demo/middle/languages': return json({ CSS: 30, JavaScript: 10 })
@@ -41,12 +42,28 @@ test('paginates, scopes public repositories, reports coverage and ranks projects
     }
   }
   const snapshot = await collect(config, { token: 'fixture', fetcher })
-  assert.deepEqual(snapshot.overview, { repos: 3, stars: 10, forks: 10, followers: 19 })
+  assert.deepEqual(snapshot.overview, { repos: 3, stars: 10, forks: 10, followers: 19, following: 5,
+    publicGists: 2, forksMade: 2 })
   assert.deepEqual(snapshot.languages, { scanned: 2, eligible: 3, rows: [['JavaScript', 100], ['CSS', 30]] })
   assert.deepEqual(snapshot.projects.map(project => project.name), ['newest', 'middle', 'older'])
   assert.equal(snapshot.activity.days.at(-1), 1)
   assert.equal(snapshot.activity.days.reduce((a, b) => a + b), 1)
   assert.equal(requests.length, 6)
+})
+
+test('orders configurable overview metrics and skips repo calls for profile-only stats', async () => {
+  const config = parseConfig({ username: 'demo', cards: ['overview'], locale: 'pt-BR',
+    overviewMetrics: ['publicGists', 'following'] })
+  const snapshot = await collect(config, { fetcher: async url => {
+    assert.equal(url.pathname, '/users/demo')
+    return json({ login: 'demo', type: 'User', followers: 19, following: 5, public_gists: 2 })
+  } })
+  assert.match(renderReport(snapshot, config), /Gists públicos — 2\n- Seguindo — 5/)
+  const one = renderCard('overview', snapshot, config.locale, 'light', {}, { overviewMetrics: ['following'] })
+  assert.match(one, /width="376" height="61"/)
+  assert.doesNotMatch(one, /Gists públicos|Seguidores/)
+  assert.throws(() => parseConfig({ ...config, overviewMetrics: [] }), /overviewMetrics must select/)
+  assert.throws(() => parseConfig({ ...config, overviewMetrics: ['privateRepos'] }), /overviewMetrics must select/)
 })
 
 test('skips deleted repositories in language coverage and avoids unused endpoints', async () => {
@@ -115,7 +132,8 @@ test('embeds any selected number of cards in order, with optional two-column row
       const twoColumns = layout === 'columns' && size > 1
       assert.deepEqual([...embed.matchAll(/src="\.\/statvitra-cards\/(\w+)-light\.svg"/g)]
         .map(match => match[1]), cards)
-      assert.equal(embed.match(/<p>/g).length, twoColumns ? Math.ceil(size / 2) : size)
+      assert.equal(embed.match(/<p>/g).length, twoColumns ? 1 : size)
+      assert.equal([...embed.matchAll(/<br>/g)].length, twoColumns ? Math.ceil(size / 2) - 1 : 0)
       assert.equal(embed.match(/width="(?:320|432)"/g).length, size)
       assert.ok(embed.includes(`width="${twoColumns ? 320 : 432}"`))
       assert.equal([...embed.matchAll(/align="top"/g)].length, twoColumns ? size : 0)
@@ -180,8 +198,8 @@ test('refreshes only the opt-in README block and respects per-card animation ove
   assert.equal(await readFile(path, 'utf8'), updated)
   const card = suffix => readFile(join(root, 'statvitra-cards', suffix + '.svg'), 'utf8')
   assert.match(await card('activity-dark-motion'), /@keyframes fade/)
-  assert.match(await card('activity-dark-motion'), /viewBox="-6 -6 444 \d+"/)
-  assert.match(await card('activity-dark'), /viewBox="-6 -6 444 \d+"/)
+  assert.match(await card('activity-dark-motion'), /viewBox="-14 -14 460 \d+"/)
+  assert.match(await card('activity-dark'), /viewBox="-14 -14 460 \d+"/)
   assert.doesNotMatch(await card('activity-dark'), /<style>/)
   assert.doesNotMatch(await card('overview-dark'), /<style>/)
   await generate(root, demo, { ...config, animation: 'none' })

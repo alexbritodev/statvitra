@@ -47,7 +47,8 @@ export async function generate(root, snapshot, config) {
   ])
   const obsolete = []
   // Space travels with the image when GitHub wraps a pair onto separate lines.
-  const appearance = { branding: config.branding, gutter: usesColumns(config) ? 6 : 0 }
+  const appearance = { branding: config.branding, overviewMetrics: config.overviewMetrics,
+    gutter: usesColumns(config) ? 14 : 0 }
   for (const card of defaults.cards) {
     for (const theme of themes) {
       const name = `${card}-${theme}.svg`

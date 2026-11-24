@@ -59,11 +59,10 @@ function githubClient(token, fetcher) {
   return { get, list }
 }
 
-function selectRepositories(raw, config) {
+function publicOwnedRepositories(raw, config) {
   const excluded = new Set(config.excludeRepositories.map(name => name.toLowerCase()))
   return [...new Map(raw.filter(repo => repo.private === false &&
     repo.owner?.login?.toLowerCase() === config.username.toLowerCase() &&
-    (config.includeForks || !repo.fork) && (config.includeArchived || !repo.archived) &&
     !excluded.has(repo.name.toLowerCase()) && !excluded.has(repo.full_name.toLowerCase()))
     .map(repo => [repo.id, repo])).values()]
 }
@@ -74,16 +73,24 @@ export async function collect(config, { token, fetcher = globalThis.fetch } = {}
   const { data: profile } = await client.get(`/users/${login}`)
   if (profile.type !== 'User') throw new Error('StatVitra requires a personal GitHub profile.')
   const snapshot = { login: profile.login }
-  if (config.cards.some(card => card !== 'activity')) {
+  const overview = config.cards.includes('overview')
+  if (overview) {
+    snapshot.overview = { followers: profile.followers, following: profile.following, publicGists: profile.public_gists }
+  }
+  const repositoryMetrics = ['repos', 'stars', 'forks', 'forksMade']
+  const needsRepositories = config.cards.includes('languages') || config.cards.includes('projects') ||
+    (overview && config.overviewMetrics.some(metric => repositoryMetrics.includes(metric)))
+  if (needsRepositories) {
     const { data } = await client.list(`/users/${login}/repos?type=owner&sort=full_name&per_page=100`)
-    const repos = selectRepositories(data, config)
-    if (config.cards.includes('overview')) {
-      snapshot.overview = {
+    const owned = publicOwnedRepositories(data, config)
+    const repos = owned.filter(repo => (config.includeForks || !repo.fork) && (config.includeArchived || !repo.archived))
+    if (overview) {
+      Object.assign(snapshot.overview, {
         repos: repos.length,
         stars: repos.reduce((sum, repo) => sum + repo.stargazers_count, 0),
         forks: repos.reduce((sum, repo) => sum + repo.forks_count, 0),
-        followers: profile.followers
-      }
+        forksMade: owned.filter(repo => repo.fork === true).length
+      })
     }
 
     if (config.cards.includes('languages')) {

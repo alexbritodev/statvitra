@@ -1,5 +1,11 @@
 # 📝 Changelog
 
+## 1.2.0
+
+- Add room between paired cards on desktop and keep consistent spacing when pairs wrap on mobile.
+- Choose and order up to seven Overview metrics, including forks made, accounts followed, and public gists.
+- Match the text report to the selected metrics and skip repository requests for profile-only summaries.
+
 ## 1.1.0
 
 - Show one to four cards as a vertical list or as pairs that wrap on narrow screens.

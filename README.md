@@ -50,7 +50,7 @@ The example updater uses the repository's automatic `GITHUB_TOKEN`. It asks for 
 
 | Card | Source and scope |
 | --- | --- |
-| Overview | Repository count and stars and forks received across the selected public repositories you own. Followers are counted at profile level. |
+| Overview | Choose repository, fork and profile metrics. The report lists the same metrics in the order you select. |
 | Languages | Bytes reported by GitHub Linguist in up to the configured number of eligible repositories, most recently pushed first. Coverage is shown on the card. When there are more than six languages, the first five are shown separately and the rest are grouped as Other. Shares describe source composition. |
 | Projects | Up to five public repositories, ranked by stars, then forks, most recent push, and name. The text report links to each project. |
 | Activity | Public events returned by GitHub for the last 30 calendar days in UTC, including the current day. GitHub caps the feed at 300 events and may deliver events late. This card measures events from that feed. |
@@ -71,6 +71,7 @@ Repository filters affect Overview, Languages and Projects. The profile's follow
 | `languageRepositoryLimit` | `30` | Analyze 1–100 eligible repositories for the Languages card. Each analyzed repository uses a REST request. |
 | `projectCount` | `3` | Show 1–5 projects. |
 | `cards` | All four | Select and order `overview`, `languages`, `projects`, `activity`. |
+| `overviewMetrics` | `["repos", "stars", "forks", "followers"]` | Choose and order one to seven metrics for the Overview card. |
 | `layout` | `stacked` | Use one card per row or choose `columns` to pair cards when there is room. |
 | `branding.position` | `hidden` | Choose `hidden`, `top-left`, or `bottom-right`. |
 | `branding.link` | `false` | Make cards with visible branding link to StatVitra. |
@@ -85,6 +86,7 @@ List one to four entries under `cards` in the order you want them to appear. Wit
 {
   "cards": ["overview", "languages", "projects"],
   "layout": "columns",
+  "overviewMetrics": ["repos", "stars", "forks", "forksMade", "followers", "following"],
   "branding": { "position": "bottom-right", "link": false },
   "animation": "fade",
   "cardAnimations": { "languages": "rise", "projects": "sweep" }
@@ -94,6 +96,18 @@ List one to four entries under `cards` in the order you want them to appear. Wit
 **Fade** brings the card content into view, **Rise** moves the content up slightly, and **Sweep** draws an accent line below the subtitle. Each animation plays once when its image loads. Use the generated embed snippet to select the static SVG for visitors who prefer reduced motion. Viewers without SVG animation support display the final static card.
 
 Branding is opt-in. When you enable the link, clicking the card in the GitHub README opens the StatVitra repository.
+
+### Overview metrics
+
+| Key | What it counts |
+| --- | --- |
+| `repos` | Selected public repositories you own. |
+| `stars` | Stars received across those repositories. |
+| `forks` | Forks received across those repositories. |
+| `forksMade` | Public fork repositories still owned by the profile, including archived forks. `excludeRepositories` applies. |
+| `followers` | Followers of the profile. |
+| `following` | Accounts the profile follows. |
+| `publicGists` | Public gists published by the profile. |
 
 ## 🌐 Languages
 

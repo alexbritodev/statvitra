@@ -4,11 +4,14 @@ Dados de exemplo
 
 ## Resumo do perfil
 
-@demo
+- Repositórios — 24
+- Estrelas recebidas — 1.428
+- Forks recebidos — 216
+- Forks feitos — 8
+- Seguidores — 368
+- Seguindo — 62
 
-Repositórios — 24\. Estrelas recebidas — 1\.428\. Forks recebidos — 216\. Seguidores — 368
-
-Repositórios públicos selecionados
+Dados públicos do GitHub
 
 ## Linguagens principais
 
