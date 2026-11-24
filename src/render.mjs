@@ -1,5 +1,5 @@
 import { copyFor } from './copy.mjs'
-import { animationFor, defaults } from './config.mjs'
+import { animationFor, defaults, usesColumns } from './config.mjs'
 import languageColors from './linguist-colors.json' with { type: 'json' }
 
 const palettes = {
@@ -72,7 +72,7 @@ ${label(67, 39, 'StatVitra', p.accent, 16, 750)}`
   return label(404, height - 17, 'StatVitra', p.accent, 13, 700, 'end', 90)
 }
 
-function artboard(height, title, subtitle, description, footer, theme, locale, body, demoLabel, brand, animation) {
+function artboard(height, title, subtitle, description, footer, theme, locale, body, demoLabel, brand, animation, gutter) {
   const p = palettes[theme]
   const top = brand.position === 'top-left'
   const bottom = brand.position === 'bottom-right'
@@ -82,7 +82,10 @@ function artboard(height, title, subtitle, description, footer, theme, locale, b
   const branding = mark && brand.link ? `<a href="${projectUrl}" aria-label="StatVitra">${mark}</a>` : mark
   const sweep = animation === 'sweep' ?
     `<g transform="translate(28 ${116 - shift})"><path class="sweep" d="M0 0h376" stroke="${p.accent}" stroke-width="2" stroke-linecap="round" opacity="0"/></g>` : ''
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title description" xml:lang="${locale}">
+  const canvasWidth = width + 2 * gutter
+  const canvasHeight = height + 2 * gutter
+  const origin = gutter ? -gutter : 0
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}" viewBox="${origin} ${origin} ${canvasWidth} ${canvasHeight}" role="img" aria-labelledby="title description" xml:lang="${locale}">
 <title id="title">${xml(title)}</title>
 <desc id="description">${xml(description)}</desc>
 ${style}
@@ -183,12 +186,12 @@ function cardContent(card, s, t, locale) {
 }
 
 export function renderCard(card, snapshot, locale, theme, messages, { branding = defaults.branding,
-  animation = defaults.animation } = {}) {
+  animation = defaults.animation, gutter = 0 } = {}) {
   const t = copyFor(locale, messages)
   const [height, subtitle, description, footer, body] = cardContent(card, snapshot, t, locale)
   const resolvedHeight = branding.position === 'top-left' ? height : height - 33
   return artboard(resolvedHeight, t[card], subtitle, description, footer, theme, locale, body,
-    snapshot.demo ? t.demo : '', branding, animation)
+    snapshot.demo ? t.demo : '', branding, animation, gutter)
 }
 
 const markdown = value => xml(value).replace(/[\\*_\x60\[\]~|#!()+.\-]/g, '\\$&')
@@ -215,7 +218,7 @@ export function renderReport(snapshot, config) {
 
 export function renderEmbed(config) {
   const t = copyFor(config.locale, config.messages)
-  const columns = config.layout === 'columns' && config.cards.length > 1
+  const columns = usesColumns(config)
   const linked = config.branding?.position !== 'hidden' && config.branding?.link
   const pictures = config.cards.map(card => {
     const motionSources = animationFor(config, card) === 'none' ? '' : `

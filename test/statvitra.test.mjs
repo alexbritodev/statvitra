@@ -180,6 +180,8 @@ test('refreshes only the opt-in README block and respects per-card animation ove
   assert.equal(await readFile(path, 'utf8'), updated)
   const card = suffix => readFile(join(root, 'statvitra-cards', suffix + '.svg'), 'utf8')
   assert.match(await card('activity-dark-motion'), /@keyframes fade/)
+  assert.match(await card('activity-dark-motion'), /viewBox="-6 -6 444 \d+"/)
+  assert.match(await card('activity-dark'), /viewBox="-6 -6 444 \d+"/)
   assert.doesNotMatch(await card('activity-dark'), /<style>/)
   assert.doesNotMatch(await card('overview-dark'), /<style>/)
   await generate(root, demo, { ...config, animation: 'none' })

@@ -1,6 +1,6 @@
 import { lstat, mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { animationFor, defaults } from './config.mjs'
+import { animationFor, defaults, usesColumns } from './config.mjs'
 import { embedEnd, embedStart, renderCard, renderEmbed, renderReport } from './render.mjs'
 
 export const outputName = 'statvitra-cards'
@@ -46,6 +46,8 @@ export async function generate(root, snapshot, config) {
     ['EMBED.md', embed]
   ])
   const obsolete = []
+  // Space travels with the image when GitHub wraps a pair onto separate lines.
+  const appearance = { branding: config.branding, gutter: usesColumns(config) ? 6 : 0 }
   for (const card of defaults.cards) {
     for (const theme of themes) {
       const name = `${card}-${theme}.svg`
@@ -54,11 +56,10 @@ export async function generate(root, snapshot, config) {
         obsolete.push(name, motion)
         continue
       }
-      const { branding } = config
-      files.set(name, renderCard(card, snapshot, config.locale, theme, config.messages, { branding }))
+      files.set(name, renderCard(card, snapshot, config.locale, theme, config.messages, appearance))
       const animation = animationFor(config, card)
       if (animation === 'none') obsolete.push(motion)
-      else files.set(motion, renderCard(card, snapshot, config.locale, theme, config.messages, { branding, animation }))
+      else files.set(motion, renderCard(card, snapshot, config.locale, theme, config.messages, { ...appearance, animation }))
     }
   }
 

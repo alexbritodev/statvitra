@@ -46,6 +46,10 @@ export function animationFor(config, card) {
   return config.cardAnimations?.[card] ?? config.animation ?? defaults.animation
 }
 
+export function usesColumns(config) {
+  return config.layout === 'columns' && config.cards.length > 1
+}
+
 export function parseConfig(input, username, locale) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new Error('statvitra.json must contain a JSON object.')
