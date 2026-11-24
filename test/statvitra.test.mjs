@@ -44,7 +44,8 @@ test('paginates, scopes public repositories, reports coverage and ranks projects
   const snapshot = await collect(config, { token: 'fixture', fetcher })
   assert.deepEqual(snapshot.overview, { repos: 3, stars: 10, forks: 10, followers: 19, following: 5,
     publicGists: 2, forksMade: 2 })
-  assert.deepEqual(snapshot.languages, { scanned: 2, eligible: 3, rows: [['JavaScript', 100], ['CSS', 30]] })
+  assert.deepEqual(snapshot.languages, { scanned: 2, eligible: 3, rows: [['JavaScript', 100], ['CSS', 30]],
+    repositoryCounts: { JavaScript: 2, CSS: 1 } })
   assert.deepEqual(snapshot.projects.map(project => project.name), ['newest', 'middle', 'older'])
   assert.equal(snapshot.activity.days.at(-1), 1)
   assert.equal(snapshot.activity.days.reduce((a, b) => a + b), 1)
@@ -74,7 +75,7 @@ test('skips deleted repositories in language coverage and avoids unused endpoint
     assert.equal(url.pathname, '/repos/demo/missing/languages')
     return new Response(null, { status: 404 })
   } })
-  assert.deepEqual(snapshot, { login: 'demo', languages: { scanned: 0, eligible: 1, rows: [] } })
+  assert.deepEqual(snapshot, { login: 'demo', languages: { scanned: 0, eligible: 1, rows: [], repositoryCounts: {} } })
 })
 
 test('fails safely on rate limits or untrusted pagination URLs', async () => {

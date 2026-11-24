@@ -14,7 +14,7 @@ try {
       throw new Error('--user expects a login and cannot be used with --demo.')
     }
     await run({ username: values.user, locale: values.locale,
-      token: process.env.GH_TOKEN || process.env.GITHUB_TOKEN, useDemo: values.demo })
+      token: process.env.GH_TOKEN || process.env.GITHUB_TOKEN, wakaTimeKey: process.env.WAKATIME_API_KEY, useDemo: values.demo })
   }
 } catch (error) {
   reportError(error)

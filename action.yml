@@ -8,10 +8,13 @@ inputs:
     description: GitHub login. Defaults to statvitra.json or the repository owner.
     required: false
   token:
-    description: GitHub token for REST API requests. Use the automatic GITHUB_TOKEN.
+    description: GitHub token for REST and optional GraphQL requests.
     required: false
   locale:
     description: BCP 47 language tag. Defaults to statvitra.json or en.
+    required: false
+  wakatime_key:
+    description: Optional WakaTime API key for the coding card.
     required: false
 runs:
   using: node24

@@ -1,5 +1,7 @@
 # 🔒 Security policy
 
+Public data is the default. Enabling `includePrivateContributions`, repository insights, or an authenticated WakaTime card can publish aggregate values visible to the supplied credential. Review the generated files before committing them to a public profile. Supply credentials through environment variables or Actions secrets.
+
 ## Reporting a vulnerability
 
 Use GitHub's private reporting form and include the affected commit, what conditions are needed to reproduce the issue, and what data or permissions may be affected. Share redacted logs or public sample data where possible. [Report a vulnerability privately](https://github.com/alexbritodev/statvitra/security/advisories/new)

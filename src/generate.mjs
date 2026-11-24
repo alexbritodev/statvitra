@@ -1,6 +1,6 @@
 import { lstat, mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { animationFor, defaults, usesColumns } from './config.mjs'
+import { animationFor, cardNames, usesColumns } from './config.mjs'
 import { embedEnd, embedStart, renderCard, renderEmbed, renderReport } from './render.mjs'
 
 export const outputName = 'statvitra-cards'
@@ -38,7 +38,7 @@ export async function generate(root, snapshot, config) {
   } catch (error) {
     if (error.code !== 'ENOENT') throw error
   }
-  const embed = renderEmbed(config)
+  const embed = renderEmbed(config, snapshot)
   const readmePath = join(root, 'README.md')
   const readme = await readmeUpdate(readmePath, embed)
   const files = new Map([
@@ -46,10 +46,11 @@ export async function generate(root, snapshot, config) {
     ['EMBED.md', embed]
   ])
   const obsolete = []
+  if (config.exportJson) files.set('STATS.json', JSON.stringify({ schemaVersion: 1, ...snapshot }, null, 2) + '\n')
+  else obsolete.push('STATS.json')
   // Space travels with the image when GitHub wraps a pair onto separate lines.
-  const appearance = { branding: config.branding, overviewMetrics: config.overviewMetrics,
-    gutter: usesColumns(config) ? 14 : 0 }
-  for (const card of defaults.cards) {
+  const appearance = { ...config, gutter: usesColumns(config) ? 14 : 0 }
+  for (const card of cardNames) {
     for (const theme of themes) {
       const name = `${card}-${theme}.svg`
       const motion = `${card}-${theme}-motion.svg`
@@ -57,7 +58,7 @@ export async function generate(root, snapshot, config) {
         obsolete.push(name, motion)
         continue
       }
-      files.set(name, renderCard(card, snapshot, config.locale, theme, config.messages, appearance))
+      files.set(name, renderCard(card, snapshot, config.locale, theme, config.messages, { ...appearance, animation: 'none' }))
       const animation = animationFor(config, card)
       if (animation === 'none') obsolete.push(motion)
       else files.set(motion, renderCard(card, snapshot, config.locale, theme, config.messages, { ...appearance, animation }))

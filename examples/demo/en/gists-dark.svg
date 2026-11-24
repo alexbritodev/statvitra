@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="304" viewBox="0 0 432 304" role="img" aria-labelledby="title description" xml:lang="en">
+<title id="title">Public gists</title>
+<desc id="description">release-notes.sh · Create a changelog from Git tags · Files 2. palette.ts · Accessible color utilities · Files 1</desc>
+
+<g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-variant-numeric="tabular-nums">
+<rect x="0.5" y="0.5" width="431" height="303" rx="22" fill="#111426" stroke="#343d5c"/>
+<rect x="28" y="18" width="30" height="30" rx="9" fill="#29214b" stroke="none"/>
+<path d="M36 32h3v8h-3zm5-4h3v12h-3zm5-4h3v16h-3z" fill="#c6b6ff"/>
+<text x="67" y="39" font-size="16" font-weight="750" text-anchor="start" fill="#c6b6ff" unicode-bidi="plaintext">StatVitra</text>
+<text x="404" y="38" font-size="12" font-weight="600" text-anchor="end" fill="#b9c2dd" unicode-bidi="plaintext">Sample data</text>
+<text x="28" y="82" font-size="28" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">Public gists</text>
+<text x="28" y="108" font-size="15" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Code snippets on GitHub</text>
+
+<g transform="translate(0 0)"><g class="content"><rect x="28" y="124" width="376" height="56" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="41" y="147" font-size="16" font-weight="700" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">release-notes.sh</text><text x="391" y="146" font-size="12" font-weight="600" text-anchor="end" fill="#b9c2dd" unicode-bidi="plaintext">Files · 2</text><circle cx="46" cy="166" r="5" fill="#89e051" stroke="#b9c2dd" stroke-opacity=".55"/><text x="58" y="170" font-size="13" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Create a changelog from Git tags</text><rect x="28" y="188" width="376" height="56" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="41" y="211" font-size="16" font-weight="700" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">palette.ts</text><text x="391" y="210" font-size="12" font-weight="600" text-anchor="end" fill="#b9c2dd" unicode-bidi="plaintext">Files · 1</text><circle cx="46" cy="230" r="5" fill="#3178c6" stroke="#b9c2dd" stroke-opacity=".55"/><text x="58" y="234" font-size="13" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Accessible color utilities</text></g></g>
+<rect x="28" y="263" width="376" height="1" rx="0" fill="#343d5c" stroke="none"/>
+<text x="28" y="287" font-size="13" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">@demo</text>
+</g>
+</svg>

@@ -38,6 +38,10 @@ jobs:
                   assert svg.attrib["{http://www.w3.org/XML/1998/namespace}lang"] == "pt-BR"
           for name in ("EMBED.md", "REPORT.md"):
               assert (output / name).stat().st_size > 0
+          for demo in ("en", "pt-BR"):
+              for example in (Path("examples/demo") / demo).glob("*.svg"):
+                  root = ElementTree.parse(example).getroot()
+                  assert root.attrib["{http://www.w3.org/XML/1998/namespace}lang"] == demo
           PY
       - name: Smoke test with the GitHub REST API
         if: runner.os == 'Linux' && github.event_name != 'pull_request'
@@ -50,3 +54,27 @@ jobs:
         run: |
           grep -Fx '# @alexbritodev' statvitra-cards/REPORT.md
           grep -q 'xml:lang="en"' statvitra-cards/overview-light.svg
+      - name: Smoke test contributions, pins and export
+        if: runner.os == 'Linux' && github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          workdir="$(mktemp -d)"
+          cat > "$workdir/statvitra.json" <<'JSON'
+          {
+            "cards": ["contributions", "projects", "gists"],
+            "projectSelection": "pinned",
+            "contributionMetrics": ["commits", "pullRequests", "reviews"],
+            "exportJson": true
+          }
+          JSON
+          cd "$workdir"
+          node "$GITHUB_WORKSPACE/src/cli.mjs" --user alexbritodev
+          node --input-type=module -e '
+            import assert from "node:assert/strict";
+            import { readFileSync } from "node:fs";
+            const snapshot = JSON.parse(readFileSync("statvitra-cards/STATS.json", "utf8"));
+            assert.equal(snapshot.contributions.includesPrivate, false);
+            assert.ok(Number.isInteger(snapshot.contributions.values.reviews));
+            assert.ok(Array.isArray(snapshot.projects) && Array.isArray(snapshot.gists));
+          '

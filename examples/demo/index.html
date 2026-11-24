@@ -68,6 +68,22 @@
         <source media="(prefers-color-scheme: dark)" srcset="en/activity-dark.svg">
         <img src="en/activity-light.svg" alt="Public activity" width="432" height="270">
       </picture>
+      <picture data-card="contributions">
+        <source media="(prefers-color-scheme: dark)" srcset="en/contributions-dark.svg">
+        <img src="en/contributions-light.svg" alt="Contributions" width="432" height="378">
+      </picture>
+      <picture data-card="gists">
+        <source media="(prefers-color-scheme: dark)" srcset="en/gists-dark.svg">
+        <img src="en/gists-light.svg" alt="Public gists" width="432" height="304">
+      </picture>
+      <picture data-card="insights">
+        <source media="(prefers-color-scheme: dark)" srcset="en/insights-dark.svg">
+        <img src="en/insights-light.svg" alt="Repository insights" width="432" height="310">
+      </picture>
+      <picture data-card="coding">
+        <source media="(prefers-color-scheme: dark)" srcset="en/coding-dark.svg">
+        <img src="en/coding-light.svg" alt="Coding time" width="432" height="332">
+      </picture>
     </div>
     <p class="report"><a id="report" href="en/REPORT.md">Read the stats as text</a></p>
   </main>
@@ -81,7 +97,8 @@
       nav.querySelector('[lang="en"]').removeAttribute('aria-current')
       nav.querySelector('[lang="pt-BR"]').setAttribute('aria-current', 'true')
       const labels = { overview: 'Resumo do perfil', languages: 'Linguagens principais',
-        projects: 'Projetos em destaque', activity: 'Atividade pública' }
+        projects: 'Projetos em destaque', activity: 'Atividade pública', contributions: 'Contribuições',
+        gists: 'Gists públicos', insights: 'Dados dos repositórios', coding: 'Tempo de programação' }
       for (const picture of document.querySelectorAll('[data-card]')) {
         const card = picture.dataset.card
         for (const source of picture.querySelectorAll('source')) {

@@ -1,8 +1,10 @@
 # 📝 Changelog
 
-## Unreleased
+## 1.3.0
 
 - Hide the text report link by default. Set `showReportLink` to show it below the cards.
+- Add contribution, gist, repository insight and WakaTime cards.
+- Add curated and pinned projects, weighted language charts, public contribution language scope, palettes and JSON exports.
 
 ## 1.2.0
 

@@ -6,7 +6,8 @@ try {
     username: process.env.INPUT_USERNAME?.trim(),
     locale: process.env.INPUT_LOCALE?.trim() || undefined,
     fallback: process.env.GITHUB_REPOSITORY_OWNER,
-    token: process.env.INPUT_TOKEN?.trim() || process.env.GITHUB_TOKEN
+    token: process.env.INPUT_TOKEN?.trim() || process.env.GITHUB_TOKEN,
+    wakaTimeKey: process.env.INPUT_WAKATIME_KEY?.trim() || process.env.WAKATIME_API_KEY
   })
 } catch (error) {
   reportError(error)

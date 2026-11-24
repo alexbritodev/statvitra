@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="310" viewBox="0 0 432 310" role="img" aria-labelledby="title description" xml:lang="pt-BR">
+<title id="title">Dados dos repositórios</title>
+<desc id="description">Visitas · 14 dias — 4.028. Visitas únicas — 1.156. Linhas adicionadas — 13.120. Linhas removidas — 4.809</desc>
+
+<g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-variant-numeric="tabular-nums">
+<rect x="0.5" y="0.5" width="431" height="309" rx="22" fill="#111426" stroke="#343d5c"/>
+<rect x="28" y="18" width="30" height="30" rx="9" fill="#29214b" stroke="none"/>
+<path d="M36 32h3v8h-3zm5-4h3v12h-3zm5-4h3v16h-3z" fill="#c6b6ff"/>
+<text x="67" y="39" font-size="16" font-weight="750" text-anchor="start" fill="#c6b6ff" unicode-bidi="plaintext">StatVitra</text>
+<text x="404" y="38" font-size="12" font-weight="600" text-anchor="end" fill="#b9c2dd" unicode-bidi="plaintext">Dados de exemplo</text>
+<text x="28" y="82" font-size="28" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">Dados dos repositórios</text>
+<text x="28" y="108" font-size="15" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Tráfego e alterações de sua autoria</text>
+
+<g transform="translate(0 0)"><g class="content"><rect x="28" y="126" width="184" height="61" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="41" y="153" font-size="24" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">4 mil</text><text x="41" y="174" font-size="14" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Visitas · 14 dias</text><rect x="220" y="126" width="184" height="61" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="233" y="153" font-size="24" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">1,2 mil</text><text x="233" y="174" font-size="14" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Visitas únicas</text><rect x="28" y="194" width="184" height="61" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="41" y="221" font-size="24" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">13,1 mil</text><text x="41" y="242" font-size="14" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Linhas adicionadas</text><rect x="220" y="194" width="184" height="61" rx="11" fill="#1b2038" stroke="#343d5c"/><text x="233" y="221" font-size="24" font-weight="750" text-anchor="start" fill="#f4f4ff" unicode-bidi="plaintext">4,8 mil</text><text x="233" y="242" font-size="14" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Linhas removidas</text></g></g>
+<rect x="28" y="269" width="376" height="1" rx="0" fill="#343d5c" stroke="none"/>
+<text x="28" y="293" font-size="13" font-weight="500" text-anchor="start" fill="#b9c2dd" unicode-bidi="plaintext">Cobertura · tráfego 7/8 · linhas 6/8</text>
+</g>
+</svg>
