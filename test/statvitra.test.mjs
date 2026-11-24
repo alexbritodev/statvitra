@@ -118,6 +118,7 @@ test('embeds any selected number of cards in order, with optional two-column row
       assert.equal(embed.match(/<p>/g).length, twoColumns ? Math.ceil(size / 2) : size)
       assert.equal(embed.match(/width="(?:320|432)"/g).length, size)
       assert.ok(embed.includes(`width="${twoColumns ? 320 : 432}"`))
+      assert.equal([...embed.matchAll(/align="top"/g)].length, twoColumns ? size : 0)
     }
   }
 })

@@ -223,7 +223,7 @@ export function renderEmbed(config) {
   <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: light)" srcset="./statvitra-cards/${card}-light-motion.svg">`
     const picture = `<picture>${motionSources}
   <source media="(prefers-color-scheme: dark)" srcset="./statvitra-cards/${card}-dark.svg">
-  <img alt="${xml(t[card])}" src="./statvitra-cards/${card}-light.svg" width="${columns ? 320 : width}">
+  <img alt="${xml(t[card])}" src="./statvitra-cards/${card}-light.svg" width="${columns ? 320 : width}"${columns ? ' align="top"' : ''}>
 </picture>`
     return linked ? `<a href="${projectUrl}">${picture}</a>` : picture
   })
