@@ -76,16 +76,24 @@ export async function contributedRepositories(client, config) {
   throw new Error('Too many contributed repositories to analyze in one run. Use the owned language scope.')
 }
 
-export async function collectGists(client, config) {
+export async function collectGists(client, config, publicClient) {
+  async function getGist(path, allowMissing) {
+    const allowed = allowMissing ? [404] : []
+    if (client === publicClient) return (await client.get(path, allowed)).data
+    const result = await client.get(path, [...allowed, 403])
+    if (result.status !== 403) return result.data
+    return (await publicClient.get(path, allowed)).data
+  }
   const items = []
   if (config.featuredGists.length) {
     for (const id of config.featuredGists) {
-      const { data } = await client.get(`/gists/${encodeURIComponent(id)}`, [404])
+      const data = await getGist(`/gists/${encodeURIComponent(id)}`, true)
       if (data?.public === true && !items.some(gist => gist.id === data.id)) items.push(data)
       if (items.length >= config.gistCount) break
     }
   } else {
-    const { data } = await client.list(`/users/${encodeURIComponent(config.username)}/gists?per_page=${config.gistCount}`, 1)
+    const data = await getGist(`/users/${encodeURIComponent(config.username)}/gists?per_page=${config.gistCount}`, false)
+    if (!Array.isArray(data)) throw new Error('GitHub returned an unexpected gist list.')
     items.push(...data.filter(gist => gist.public === true))
   }
   const selected = items.slice(0, config.gistCount)

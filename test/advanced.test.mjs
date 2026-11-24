@@ -98,6 +98,20 @@ test('isolates WakaTime credentials and keeps only totals and language durations
   assert.match(renderCard('coding', snapshot, config.locale, 'dark', {}, config), /Python/)
 })
 
+test('uses the public gist endpoint when an installation token cannot access it', async () => {
+  const config = parseConfig({ username: 'demo', cards: ['gists'] })
+  const scopes = []
+  const snapshot = await collect(config, { token: 'github-fixture', fetcher: async (url, options) => {
+    if (url.pathname === '/users/demo') return profile()
+    assert.equal(url.pathname, '/users/demo/gists')
+    scopes.push(options.headers.Authorization ?? 'anonymous')
+    if (options.headers.Authorization) return new Response(null, { status: 403 })
+    return Response.json([{ id: '123456', public: true, files: {} }])
+  } })
+  assert.deepEqual(scopes, ['Bearer github-fixture', 'anonymous'])
+  assert.equal(snapshot.gists[0].id, '123456')
+})
+
 test('exports public contributed languages without including unselected or private data', async () => {
   const config = parseConfig({ username: 'demo', cards: ['languages'], exportJson: true, languageScope: 'owned-and-contributed',
     excludeLanguages: ['fixture*'] })

@@ -40,7 +40,7 @@ function githubClient(token, fetcher) {
           response.headers.has('retry-after')) {
         throw new Error('GitHub API rate limit reached. Wait for the limit to reset and rerun.')
       }
-      if (allowed.includes(response.status)) return { data: null, next: null }
+      if (allowed.includes(response.status)) return { data: null, next: null, status: response.status }
       const hint = response.status === 401 || response.status === 403 ? ' Check token permissions.' : ''
       const endpoint = url.pathname === '/graphql' || url.pathname.startsWith('/search/') ? ` at ${url.pathname}` : ''
       throw new Error(`GitHub API returned HTTP ${response.status}${endpoint}.${hint}`)
@@ -164,7 +164,10 @@ export async function collect(config, { token, wakaTimeKey, fetcher = globalThis
 
   if (projects && !topProjects) snapshot.projects = await featuredProjects(client, config)
   if (config.cards.includes('contributions')) snapshot.contributions = await collectContributions(client, config, now, profile.created_at)
-  if (config.cards.includes('gists')) snapshot.gists = await collectGists(client, config)
+  if (config.cards.includes('gists')) {
+    const publicClient = token ? githubClient(undefined, fetcher) : client
+    snapshot.gists = await collectGists(client, config, publicClient)
+  }
   if (config.cards.includes('coding')) snapshot.coding = await collectCoding(config, fetcher, wakaTimeKey)
 
   if (config.cards.includes('activity')) {
