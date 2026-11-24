@@ -65,7 +65,7 @@ jobs:
           workdir="$(mktemp -d)"
           cat > "$workdir/statvitra.json" <<'JSON'
           {
-            "cards": ["contributions", "projects", "gists"],
+            "cards": ["contributions", "projects"],
             "projectSelection": "pinned",
             "contributionMetrics": ["commits", "pullRequests", "reviews"],
             "exportJson": true
@@ -79,5 +79,6 @@ jobs:
             const snapshot = JSON.parse(readFileSync("statvitra-cards/STATS.json", "utf8"));
             assert.equal(snapshot.contributions.includesPrivate, false);
             assert.ok(Number.isInteger(snapshot.contributions.values.reviews));
-            assert.ok(Array.isArray(snapshot.projects) && Array.isArray(snapshot.gists));
+            assert.ok(Array.isArray(snapshot.projects));
+            assert.ok(Array.isArray(snapshot.repositoryDetails));
           '

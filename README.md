@@ -167,7 +167,7 @@ Branding is opt-in. When you enable the link, clicking the card in the GitHub RE
 
 ### Data access for optional cards
 
-GraphQL selections require a GitHub token. For contribution searches in Actions, grant the automatic token `issues: read` and `pull-requests: read`. Public gists can be retrieved anonymously when an installation token lacks gist access. If GitHub limits access for a selection, pass a token with access to that data through the action's `token` input or `GH_TOKEN` locally. Repository traffic requires repository administration read access. Run the same configuration again when GitHub is still preparing contributor statistics.
+GraphQL selections require a GitHub token. For contribution searches in Actions, grant the automatic token `issues: read` and `pull-requests: read`. Public gists can be retrieved anonymously when an installation token lacks gist access, subject to GitHub's public rate limit. If GitHub limits access for a selection, pass a token with access to that data through the action's `token` input or `GH_TOKEN` locally. Repository traffic requires repository administration read access. Run the same configuration again when GitHub is still preparing contributor statistics.
 
 For coding time, set `wakaTimeUser` to a public WakaTime username or supply `WAKATIME_API_KEY` locally. Pass an Actions secret to the `wakatime_key` input for authenticated access. `wakaTimeRange` accepts `last_7_days` (default), `last_30_days`, `last_6_months`, `last_year` and `all_time`. Outputs contain total and language durations, omitting project names and credentials.
 
