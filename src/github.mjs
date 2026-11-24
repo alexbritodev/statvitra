@@ -42,7 +42,8 @@ function githubClient(token, fetcher) {
       }
       if (allowed.includes(response.status)) return { data: null, next: null }
       const hint = response.status === 401 || response.status === 403 ? ' Check token permissions.' : ''
-      throw new Error(`GitHub REST API returned HTTP ${response.status}.${hint}`)
+      const endpoint = url.pathname === '/graphql' || url.pathname.startsWith('/search/') ? ` at ${url.pathname}` : ''
+      throw new Error(`GitHub API returned HTTP ${response.status}${endpoint}.${hint}`)
     }
     if (allowed.includes(response.status)) return { data: null, next: null }
     return { data: await response.json(), next: nextPage(response.headers.get('link')) }
