@@ -246,5 +246,6 @@ export function renderEmbed(config) {
   // Explicit row breaks pair cards without introducing extra gaps between wrapped rows.
   const blocks = columns ? [rows.join('\n<br>\n')] : rows
   const paragraphs = blocks.map(row => `<p>\n${row}\n</p>`)
-  return [embedStart, ...paragraphs, `[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`, embedEnd].join('\n\n') + '\n'
+  if (config.showReportLink) paragraphs.push(`[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`)
+  return [embedStart, ...paragraphs, embedEnd].join('\n\n') + '\n'
 }

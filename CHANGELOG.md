@@ -1,5 +1,9 @@
 # 📝 Changelog
 
+## Unreleased
+
+- Hide the text report link by default. Set `showReportLink` to show it below the cards.
+
 ## 1.2.0
 
 - Add room between paired cards on desktop and keep consistent spacing when pairs wrap on mobile.

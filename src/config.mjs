@@ -14,6 +14,7 @@ export const defaults = {
   projectCount: 3,
   cards: ['overview', 'languages', 'projects', 'activity'],
   overviewMetrics: ['repos', 'stars', 'forks', 'followers'],
+  showReportLink: false,
   layout: 'stacked',
   branding: { position: 'hidden', link: false },
   animation: 'none',
@@ -73,7 +74,7 @@ export function parseConfig(input, username, locale) {
     throw new Error('locale must be a BCP 47 language tag.')
   }
   config.messages = validateMessages(config.messages)
-  for (const key of ['includeArchived', 'includeForks']) {
+  for (const key of ['includeArchived', 'includeForks', 'showReportLink']) {
     if (typeof config[key] !== 'boolean') throw new Error(`${key} must be true or false.`)
   }
   for (const key of ['excludeRepositories', 'excludeLanguages', 'cards', 'overviewMetrics']) {

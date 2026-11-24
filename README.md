@@ -72,6 +72,7 @@ Repository filters affect Overview, Languages and Projects. The profile's follow
 | `projectCount` | `3` | Show 1–5 projects. |
 | `cards` | All four | Select and order `overview`, `languages`, `projects`, `activity`. |
 | `overviewMetrics` | `["repos", "stars", "forks", "followers"]` | Choose and order one to seven metrics for the Overview card. |
+| `showReportLink` | `false` | Display a link to the generated text report below the cards. The report file is always generated. |
 | `layout` | `stacked` | Use one card per row or choose `columns` to pair cards when there is room. |
 | `branding.position` | `hidden` | Choose `hidden`, `top-left`, or `bottom-right`. |
 | `branding.link` | `false` | Make cards with visible branding link to StatVitra. |
