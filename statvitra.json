@@ -6,5 +6,8 @@
   "excludeLanguages": [],
   "languageRepositoryLimit": 30,
   "projectCount": 3,
-  "cards": ["overview", "languages", "projects", "activity"]
+  "cards": ["overview", "languages", "projects", "activity"],
+  "layout": "stacked",
+  "branding": { "position": "hidden", "link": false },
+  "animation": "none"
 }

@@ -47,14 +47,20 @@
     </header>
     <div class="cards">
       <picture data-card="overview">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark)" srcset="en/overview-dark-motion.svg">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: light)" srcset="en/overview-light-motion.svg">
         <source media="(prefers-color-scheme: dark)" srcset="en/overview-dark.svg">
         <img src="en/overview-light.svg" alt="Profile overview" width="432" height="310">
       </picture>
       <picture data-card="languages">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark)" srcset="en/languages-dark-motion.svg">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: light)" srcset="en/languages-light-motion.svg">
         <source media="(prefers-color-scheme: dark)" srcset="en/languages-dark.svg">
         <img src="en/languages-light.svg" alt="Top languages" width="432" height="346">
       </picture>
       <picture data-card="projects">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark)" srcset="en/projects-dark-motion.svg">
+        <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: light)" srcset="en/projects-light-motion.svg">
         <source media="(prefers-color-scheme: dark)" srcset="en/projects-dark.svg">
         <img src="en/projects-light.svg" alt="Featured projects" width="432" height="354">
       </picture>
@@ -78,7 +84,9 @@
         projects: 'Projetos em destaque', activity: 'Atividade pública' }
       for (const picture of document.querySelectorAll('[data-card]')) {
         const card = picture.dataset.card
-        picture.querySelector('source').srcset = `pt-BR/${card}-dark.svg`
+        for (const source of picture.querySelectorAll('source')) {
+          source.srcset = source.getAttribute('srcset').replace('en/', 'pt-BR/')
+        }
         const img = picture.querySelector('img')
         img.src = `pt-BR/${card}-light.svg`
         img.alt = labels[card]

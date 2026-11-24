@@ -48,5 +48,5 @@ jobs:
       - name: Check the live profile output
         if: runner.os == 'Linux' && github.event_name != 'pull_request'
         run: |
-          grep -Fx '# StatVitra · @alexbritodev' statvitra-cards/REPORT.md
+          grep -Fx '# @alexbritodev' statvitra-cards/REPORT.md
           grep -q 'xml:lang="en"' statvitra-cards/overview-light.svg

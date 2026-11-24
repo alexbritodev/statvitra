@@ -1,4 +1,5 @@
 import { copyFor } from './copy.mjs'
+import { animationFor, defaults } from './config.mjs'
 import languageColors from './linguist-colors.json' with { type: 'json' }
 
 const palettes = {
@@ -14,6 +15,14 @@ export function xml(value) {
 }
 
 const width = 432
+const projectUrl = 'https://github.com/alexbritodev/statvitra'
+export const embedStart = '<!-- statvitra:start -->'
+export const embedEnd = '<!-- statvitra:end -->'
+const effects = {
+  fade: '.content { animation: fade 1.25s ease-out } @keyframes fade { from { opacity: .22 } }',
+  rise: '.content { animation: rise 1.1s cubic-bezier(.2,.7,.25,1) } @keyframes rise { from { transform: translateY(10px); opacity: .45 } }',
+  sweep: '.sweep { animation: sweep 1.4s ease-out } @keyframes sweep { 0% { opacity: .9; transform: scaleX(0) } 65% { opacity: .8; transform: scaleX(1) } 100% { opacity: 0; transform: scaleX(1) } }'
+}
 const sum = numbers => numbers.reduce((total, value) => total + value, 0)
 const graphemes = new Intl.Segmenter()
 const wide = /[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u
@@ -54,22 +63,39 @@ function dot(x, y, color, p) {
   return `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="${p.muted}" stroke-opacity=".55"/>`
 }
 
-function artboard(height, title, subtitle, description, footer, theme, locale, body, demoLabel) {
+function brandMark(p, position, height) {
+  if (position === 'top-left') {
+    return `${rect(28, 18, 30, 30, p.wash, 9)}
+<path d="M36 32h3v8h-3zm5-4h3v12h-3zm5-4h3v16h-3z" fill="${p.accent}"/>
+${label(67, 39, 'StatVitra', p.accent, 16, 750)}`
+  }
+  return label(404, height - 17, 'StatVitra', p.accent, 13, 700, 'end', 90)
+}
+
+function artboard(height, title, subtitle, description, footer, theme, locale, body, demoLabel, brand, animation) {
   const p = palettes[theme]
+  const top = brand.position === 'top-left'
+  const bottom = brand.position === 'bottom-right'
+  const shift = top ? 0 : 33
+  const style = animation === 'none' ? '' : `<style>${effects[animation]}</style>`
+  const mark = brand.position === 'hidden' ? '' : brandMark(p, brand.position, height)
+  const branding = mark && brand.link ? `<a href="${projectUrl}" aria-label="StatVitra">${mark}</a>` : mark
+  const sweep = animation === 'sweep' ?
+    `<g transform="translate(28 ${116 - shift})"><path class="sweep" d="M0 0h376" stroke="${p.accent}" stroke-width="2" stroke-linecap="round" opacity="0"/></g>` : ''
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title description" xml:lang="${locale}">
 <title id="title">${xml(title)}</title>
 <desc id="description">${xml(description)}</desc>
+${style}
 <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-variant-numeric="tabular-nums">
 ${rect(.5, .5, width - 1, height - 1, p.bg, 22, p.line)}
-${rect(28, 18, 30, 30, p.wash, 9)}
-<path d="M36 32h3v8h-3zm5-4h3v12h-3zm5-4h3v16h-3z" fill="${p.accent}"/>
-${label(67, 39, 'StatVitra', p.accent, 16, 750)}
-${demoLabel ? label(404, 38, demoLabel, p.muted, 13, 600, 'end', 226) : ''}
-${label(28, 82, title, p.text, 28, 750)}
-${label(28, 108, subtitle, p.muted, 15)}
-${body(p)}
+${branding}
+${demoLabel ? label(404, top ? 38 : 24, demoLabel, p.muted, 12, 600, 'end', 205) : ''}
+${label(28, 82 - shift, title, p.text, 28, 750)}
+${label(28, 108 - shift, subtitle, p.muted, 15)}
+${sweep}
+<g transform="translate(0 ${-shift})"><g class="content">${body(p)}</g></g>
 ${rect(28, height - 41, 376, 1, p.line)}
-${label(28, height - 17, footer, p.muted, 13)}
+${label(28, height - 17, footer, p.muted, 13, 500, 'start', bottom ? 279 : 376)}
 </g>
 </svg>
 `
@@ -156,16 +182,19 @@ function cardContent(card, s, t, locale) {
     }]
 }
 
-export function renderCard(card, snapshot, locale, theme, messages) {
+export function renderCard(card, snapshot, locale, theme, messages, { branding = defaults.branding,
+  animation = defaults.animation } = {}) {
   const t = copyFor(locale, messages)
   const [height, subtitle, description, footer, body] = cardContent(card, snapshot, t, locale)
-  return artboard(height, t[card], subtitle, description, footer, theme, locale, body, snapshot.demo ? t.demo : '')
+  const resolvedHeight = branding.position === 'top-left' ? height : height - 33
+  return artboard(resolvedHeight, t[card], subtitle, description, footer, theme, locale, body,
+    snapshot.demo ? t.demo : '', branding, animation)
 }
 
 const markdown = value => xml(value).replace(/[\\*_\x60\[\]~|#!()+.\-]/g, '\\$&')
 export function renderReport(snapshot, config) {
   const t = copyFor(config.locale, config.messages)
-  const lines = [`# StatVitra · @${snapshot.login}`]
+  const lines = [`# @${snapshot.login}`]
   if (snapshot.demo) lines.push('', markdown(t.demo))
   for (const card of config.cards) {
     lines.push('', `## ${markdown(t[card])}`, '')
@@ -186,9 +215,22 @@ export function renderReport(snapshot, config) {
 
 export function renderEmbed(config) {
   const t = copyFor(config.locale, config.messages)
-  const pictures = config.cards.map(card => `<picture>
+  const columns = config.layout === 'columns' && config.cards.length > 1
+  const linked = config.branding?.position !== 'hidden' && config.branding?.link
+  const pictures = config.cards.map(card => {
+    const motionSources = animationFor(config, card) === 'none' ? '' : `
+  <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: dark)" srcset="./statvitra-cards/${card}-dark-motion.svg">
+  <source media="(prefers-reduced-motion: no-preference) and (prefers-color-scheme: light)" srcset="./statvitra-cards/${card}-light-motion.svg">`
+    const picture = `<picture>${motionSources}
   <source media="(prefers-color-scheme: dark)" srcset="./statvitra-cards/${card}-dark.svg">
-  <img alt="${xml(t[card])}" src="./statvitra-cards/${card}-light.svg" width="${width}">
-</picture>`)
-  return [...pictures, `[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`].join('\n\n') + '\n'
+  <img alt="${xml(t[card])}" src="./statvitra-cards/${card}-light.svg" width="${columns ? 320 : width}">
+</picture>`
+    return linked ? `<a href="${projectUrl}">${picture}</a>` : picture
+  })
+  const rows = []
+  const rowSize = columns ? 2 : 1
+  for (let i = 0; i < pictures.length; i += rowSize) {
+    rows.push(`<p>\n${pictures.slice(i, i + rowSize).join('\n')}\n</p>`)
+  }
+  return [embedStart, ...rows, `[${markdown(t.textReport)}](./statvitra-cards/REPORT.md)`, embedEnd].join('\n\n') + '\n'
 }

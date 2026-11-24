@@ -7,7 +7,7 @@ import { parseConfig } from '../src/config.mjs'
 import { demo } from '../src/demo.mjs'
 import { generate } from '../src/generate.mjs'
 import { collect } from '../src/github.mjs'
-import { renderCard, renderEmbed, renderReport, xml } from '../src/render.mjs'
+import { embedEnd, embedStart, renderCard, renderEmbed, renderReport, xml } from '../src/render.mjs'
 
 const repo = (id, name, options = {}) => ({
   id, name, full_name: `demo/${name}`, owner: { login: 'demo' }, private: false,
@@ -106,6 +106,46 @@ test('localizes regional variants and safely renders custom catalogs', () => {
   assert.throws(() => parseConfig({ ...custom, messages: { overview: 'line\nline' } }), /single-line/)
 })
 
+test('embeds any selected number of cards in order, with optional two-column rows', () => {
+  const names = ['activity', 'projects', 'languages', 'overview']
+  for (const layout of ['stacked', 'columns']) {
+    for (let size = 1; size <= names.length; size += 1) {
+      const cards = names.slice(0, size)
+      const embed = renderEmbed(parseConfig({ username: 'demo', cards, layout }))
+      const twoColumns = layout === 'columns' && size > 1
+      assert.deepEqual([...embed.matchAll(/src="\.\/statvitra-cards\/(\w+)-light\.svg"/g)]
+        .map(match => match[1]), cards)
+      assert.equal(embed.match(/<p>/g).length, twoColumns ? Math.ceil(size / 2) : size)
+      assert.equal(embed.match(/width="(?:320|432)"/g).length, size)
+      assert.ok(embed.includes(`width="${twoColumns ? 320 : 432}"`))
+    }
+  }
+})
+
+test('renders optional branding and three motion effects with reduced-motion support', () => {
+  const config = parseConfig({ username: 'demo' })
+  assert.doesNotMatch(renderCard('overview', demo, 'en', 'light'), /StatVitra|<style>/)
+  assert.doesNotMatch(renderEmbed(config), /href="https:/)
+  const top = parseConfig({ ...config, branding: { position: 'top-left' } })
+  assert.match(renderCard('overview', demo, 'en', 'light', {}, top), /x="67" y="39"[^>]*>StatVitra/)
+  assert.doesNotMatch(renderEmbed(top), /href="https:/)
+  const bottom = parseConfig({ ...config, branding: { position: 'bottom-right', link: true } })
+  assert.match(renderCard('overview', demo, 'en', 'light', {}, bottom), /x="404" y="260"[^>]*>StatVitra/)
+  assert.match(renderEmbed(bottom), /<a href="https:\/\/github\.com\/alexbritodev\/statvitra"><picture>/)
+  const hidden = parseConfig({ ...config, branding: { position: 'hidden', link: true } })
+  assert.doesNotMatch(renderEmbed(hidden), /href="https:/)
+  for (const animation of ['fade', 'rise', 'sweep']) {
+    const valid = parseConfig({ ...config, animation })
+    const card = renderCard('overview', demo, 'en', 'dark', {}, valid)
+    assert.ok(card.includes(`@keyframes ${animation}`))
+    assert.match(renderEmbed(valid), /prefers-reduced-motion: no-preference.*overview-dark-motion\.svg/)
+  }
+  assert.throws(() => parseConfig({ ...config, animation: 'bounce' }), /animation must/)
+  assert.throws(() => parseConfig({ ...config, cardAnimations: { other: 'fade' } }), /cardAnimations must/)
+  assert.throws(() => parseConfig({ ...config, branding: { link: 'yes' } }), /must be true or false/)
+  assert.throws(() => parseConfig({ ...config, layout: 2 }), /layout must/)
+})
+
 test('updates generated files deterministically and removes only obsolete cards', async t => {
   const root = await mkdtemp(join(tmpdir(), 'statvitra-test-'))
   t.after(() => rm(root, { recursive: true, force: true }))
@@ -118,6 +158,33 @@ test('updates generated files deterministically and removes only obsolete cards'
   assert.equal(await readFile(join(directory, 'overview-light.svg'), 'utf8'), card)
   assert.deepEqual((await readdir(directory)).sort(), ['EMBED.md', 'REPORT.md', 'notes.txt',
     'overview-dark.svg', 'overview-light.svg'])
+})
+
+test('refreshes only the opt-in README block and respects per-card animation overrides', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'statvitra-readme-'))
+  t.after(() => rm(root, { recursive: true, force: true }))
+  const path = join(root, 'README.md')
+  const before = '\uFEFF# My profile\r\n\r\n'
+  const after = '\r\n\r\nMy other projects.\r\n'
+  await writeFile(path, before + after)
+  const config = parseConfig({ username: 'demo', cards: ['activity', 'overview'], layout: 'columns',
+    animation: 'fade', cardAnimations: { overview: 'none' } })
+  await generate(root, demo, config)
+  assert.equal(await readFile(path, 'utf8'), before + after)
+  await writeFile(path, before + `${embedStart}\r\nOld cards\r\n${embedEnd}` + after)
+  await generate(root, demo, config)
+  const updated = before + renderEmbed(config).trimEnd().replaceAll('\n', '\r\n') + after
+  assert.equal(await readFile(path, 'utf8'), updated)
+  await generate(root, demo, config)
+  assert.equal(await readFile(path, 'utf8'), updated)
+  const card = suffix => readFile(join(root, 'statvitra-cards', suffix + '.svg'), 'utf8')
+  assert.match(await card('activity-dark-motion'), /@keyframes fade/)
+  assert.doesNotMatch(await card('activity-dark'), /<style>/)
+  assert.doesNotMatch(await card('overview-dark'), /<style>/)
+  await generate(root, demo, { ...config, animation: 'none' })
+  await assert.rejects(card('activity-dark-motion'), { code: 'ENOENT' })
+  await writeFile(path, before + embedStart + after)
+  await assert.rejects(() => generate(root, demo, config), /exactly one ordered pair/)
 })
 
 test('refuses to publish to a symlink and validates config before network use', async t => {

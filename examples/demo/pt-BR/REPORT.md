@@ -1,4 +1,4 @@
-# StatVitra · @demo
+# @demo
 
 Dados de exemplo
 
