@@ -1,0 +1,10 @@
+{
+  "locale": "en",
+  "includeArchived": false,
+  "includeForks": false,
+  "excludeRepositories": [],
+  "excludeLanguages": [],
+  "languageRepositoryLimit": 30,
+  "projectCount": 3,
+  "cards": ["overview", "languages", "projects", "activity"]
+}

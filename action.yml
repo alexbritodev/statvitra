@@ -1,0 +1,18 @@
+name: StatVitra
+description: Generate static SVG cards from public GitHub profile data.
+branding:
+  icon: bar-chart-2
+  color: purple
+inputs:
+  username:
+    description: GitHub login. Defaults to statvitra.json or the repository owner.
+    required: false
+  token:
+    description: GitHub token for REST API requests. Use the automatic GITHUB_TOKEN.
+    required: false
+  locale:
+    description: BCP 47 language tag. Defaults to statvitra.json or en.
+    required: false
+runs:
+  using: node24
+  main: src/action.mjs

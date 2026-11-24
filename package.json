@@ -1,0 +1,10 @@
+{
+  "name": "statvitra",
+  "version": "1.0.0",
+  "description": "Static, theme-aware GitHub profile cards.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test", "demo": "node src/cli.mjs --demo" },
+  "license": "MIT"
+}

@@ -1,0 +1,52 @@
+name: Test StatVitra
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '24'
+      - run: npm test
+      - run: npm run demo -- --locale pt-BR
+      - name: Validate generated SVG and Markdown files
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree
+
+          output = Path("statvitra-cards")
+          for card in ("overview", "languages", "projects", "activity"):
+              for theme in ("light", "dark"):
+                  svg = ElementTree.parse(output / f"{card}-{theme}.svg").getroot()
+                  assert svg.tag == "{http://www.w3.org/2000/svg}svg"
+                  assert svg.attrib["{http://www.w3.org/XML/1998/namespace}lang"] == "pt-BR"
+          for name in ("EMBED.md", "REPORT.md"):
+              assert (output / name).stat().st_size > 0
+          PY
+      - name: Smoke test with the GitHub REST API
+        if: runner.os == 'Linux' && github.event_name != 'pull_request'
+        uses: ./
+        with:
+          username: alexbritodev
+          token: ${{ github.token }}
+      - name: Check the live profile output
+        if: runner.os == 'Linux' && github.event_name != 'pull_request'
+        run: |
+          grep -Fx '# StatVitra · @alexbritodev' statvitra-cards/REPORT.md
+          grep -q 'xml:lang="en"' statvitra-cards/overview-light.svg

@@ -1,0 +1,10 @@
+node_modules/
+statvitra-cards/
+.statvitra-*/
+/README.pt-BR.md
+/examples/demo/preview.png
+/output/
+/.playwright-cli/
+/.env
+/.env.*
+*.log
